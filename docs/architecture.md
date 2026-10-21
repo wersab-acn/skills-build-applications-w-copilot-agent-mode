@@ -2,6 +2,7 @@
 
 OctoFit Tracker is a three-tier application for a school fitness program. The starter code includes API contracts and intentionally incomplete implementation points so you can use GitHub Copilot agent mode in a test-driven loop.
 
+
 ![Three-tier OctoFit architecture](../.github/images/octofit-architecture.svg)
 
 ## Tier boundaries
@@ -28,15 +29,16 @@ OctoFit Tracker is a three-tier application for a school fitness program. The st
 
 ## Implementation decisions
 
-Record your plan here before editing code.
+- Presentation tier decision: Keep the React pages focused on rendering; use the shared API client for relative /api requests. Each page should show accessible loading, empty, and error states.
+- Logic tier decision: Keep Express routes thin and put validation and business logic in the service layer. Return clear 4xx responses for invalid input, missing references, and unknown users.
+- Data tier decision: Use Mongoose models for validation and persistence. Keep demo seeding idempotent and non-destructive; do not clear unrelated records.
+- Activity tracking approach: Validate the request shape, ID format, and existence of the referenced user and team before creating an activity. Store the submitted fields with computed points and an occurrence timestamp. A simple, deterministic points rule—such as one point per minute—would align with the seed data.
+- Team management approach: List and create teams through the API, preserving submitted names and mascots. Reject a missing name with 400; keep member references in the data tier.
+- Leaderboard approach: Aggregate activity points by team, sort highest total first, and return teamName, totalPoints, and a 1-based rank.
 
-- Presentation tier decision:
-- Logic tier decision:
-- Data tier decision:
-- Activity tracking approach:
-- Team management approach:
-- Leaderboard approach:
-- Workout suggestions approach:
+- Workout suggestions approach: Find the user by email, use their fitness goal and recent activity to select matching workouts, and include a reason with each suggestion. Return a deliberate 4xx response when no user matches.
+
+
 
 ## Test plan
 
