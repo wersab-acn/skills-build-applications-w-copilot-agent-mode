@@ -29,12 +29,15 @@ OctoFit Tracker is a three-tier application for a school fitness program. The st
 
 ## Implementation decisions
 
-Record your plan here before editing code.
+-Presentation tier decision: Keep the React pages focused on rendering; use the shared API client for relative /api requests. Each page should show accessible loading, empty, and error states.
+- Logic tier decision: Keep Express routes thin and put validation and business logic in the service layer. Return clear 4xx responses for invalid input, missing references, and unknown users.
+- Data tier decision: Use Mongoose models for validation and persistence. Keep demo seeding idempotent and non-destructive; do not clear unrelated records.
+- Activity tracking approach: Validate the request shape, ID format, and existence of the referenced user and team before creating an activity. Store the submitted fields with computed points and an occurrence timestamp. A simple, deterministic points rule—such as one point per minute—would align with the seed data.
+- Team management approach: List and create teams through the API, preserving submitted names and mascots. Reject a missing name with 400; keep member references in the data tier.
+Leaderboard approach: Aggregate activity points by team, sort highest total first, and return teamName, totalPoints, and a 1-based rank.
+- Workout suggestions approach: Find the user by email, use their fitness goal and recent activity to select matching workouts, and include a reason with each suggestion. Return a deliberate 4xx response when no user matches.
 
-- Data tier: Add the required schema validation/defaults asserted by the data contract. Run the data suite; preserve and verify the existing idempotent, non-destructive seed behavior.
-- Logic tier: Implement service functions for activity and team creation/validation, leaderboard ordering/ranks, and user-specific workout suggestions. Ensure malformed or missing references produce deliberate 4xx responses rather than cast-error 500s. Run the API suite.
-- Presentation tier: Replace the placeholder pages with API-backed views, including accessible loading, empty, and error states; request workout suggestions for the intended user. Run the frontend suite.
-- Check builds: Run both backend and frontend builds after their respective suites.
+
 
 ## Test plan
 
