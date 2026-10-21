@@ -34,7 +34,6 @@ OctoFit Tracker is a three-tier application for a school fitness program. The st
 - Data tier decision: Use Mongoose models for validation and persistence. Keep demo seeding idempotent and non-destructive; do not clear unrelated records.
 - Activity tracking approach: Validate the request shape, ID format, and existence of the referenced user and team before creating an activity. Store the submitted fields with computed points and an occurrence timestamp. A simple, deterministic points rule—such as one point per minute—would align with the seed data.
 - Team management approach: List and create teams through the API, preserving submitted names and mascots. Reject a missing name with 400; keep member references in the data tier.
-
 - Leaderboard approach: Aggregate activity points by team, sort highest total first, and return teamName, totalPoints, and a 1-based rank.
 
 - Workout suggestions approach: Find the user by email, use their fitness goal and recent activity to select matching workouts, and include a reason with each suggestion. Return a deliberate 4xx response when no user matches.
