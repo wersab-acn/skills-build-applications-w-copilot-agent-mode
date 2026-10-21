@@ -2,6 +2,7 @@
 
 OctoFit Tracker is a three-tier application for a school fitness program. The starter code includes API contracts and intentionally incomplete implementation points so you can use GitHub Copilot agent mode in a test-driven loop.
 
+
 ![Three-tier OctoFit architecture](../.github/images/octofit-architecture.svg)
 
 ## Tier boundaries
@@ -30,13 +31,10 @@ OctoFit Tracker is a three-tier application for a school fitness program. The st
 
 Record your plan here before editing code.
 
-- Presentation tier decision:
-- Logic tier decision:
-- Data tier decision:
-- Activity tracking approach:
-- Team management approach:
-- Leaderboard approach:
-- Workout suggestions approach:
+- Data tier: Add the required schema validation/defaults asserted by the data contract. Run the data suite; preserve and verify the existing idempotent, non-destructive seed behavior.
+- Logic tier: Implement service functions for activity and team creation/validation, leaderboard ordering/ranks, and user-specific workout suggestions. Ensure malformed or missing references produce deliberate 4xx responses rather than cast-error 500s. Run the API suite.
+- Presentation tier: Replace the placeholder pages with API-backed views, including accessible loading, empty, and error states; request workout suggestions for the intended user. Run the frontend suite.
+- Check builds: Run both backend and frontend builds after their respective suites.
 
 ## Test plan
 
