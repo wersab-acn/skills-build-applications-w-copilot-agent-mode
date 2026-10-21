@@ -29,7 +29,7 @@ OctoFit Tracker is a three-tier application for a school fitness program. The st
 
 ## Implementation decisions
 
--Presentation tier decision: Keep the React pages focused on rendering; use the shared API client for relative /api requests. Each page should show accessible loading, empty, and error states.
+- Presentation tier decision: Keep the React pages focused on rendering; use the shared API client for relative /api requests. Each page should show accessible loading, empty, and error states.
 - Logic tier decision: Keep Express routes thin and put validation and business logic in the service layer. Return clear 4xx responses for invalid input, missing references, and unknown users.
 - Data tier decision: Use Mongoose models for validation and persistence. Keep demo seeding idempotent and non-destructive; do not clear unrelated records.
 - Activity tracking approach: Validate the request shape, ID format, and existence of the referenced user and team before creating an activity. Store the submitted fields with computed points and an occurrence timestamp. A simple, deterministic points rule—such as one point per minute—would align with the seed data.
