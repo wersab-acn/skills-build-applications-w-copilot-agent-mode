@@ -1,4 +1,5 @@
-import { useApiResource } from '../hooks/useApiResource.js';
+import { useEffect, useState } from 'react';
+import { getJson } from '../api/client.js';
 
 type Activity = {
   type: string;
@@ -6,8 +7,35 @@ type Activity = {
   points: number;
 };
 
+type ActivityState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'success'; data: { activities: Activity[] } };
+
 export default function Activities() {
-  const result = useApiResource<{ activities: Activity[] }>('/api/activities');
+  const [result, setResult] = useState<ActivityState>({ status: 'loading' });
+
+  useEffect(() => {
+    let active = true;
+    setResult({ status: 'loading' });
+    getJson<{ activities: Activity[] }>('/api/activities').then(
+      (data) => {
+        if (active) setResult({ status: 'success', data });
+      },
+      (error: unknown) => {
+        if (active) {
+          setResult({
+            status: 'error',
+            message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+          });
+        }
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section>
       <h2>Activities</h2>

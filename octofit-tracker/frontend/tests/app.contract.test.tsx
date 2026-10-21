@@ -15,7 +15,7 @@ const capabilities = [
   { route: '/workouts', empty: { suggestions: [] }, emptyText: /no (workout|suggestions)/i },
 ];
 
-describe('OctoFit presentations contract', () => {
+describe('OctoFit presentation contract', () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
