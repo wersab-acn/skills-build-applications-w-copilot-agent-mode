@@ -1,4 +1,5 @@
-import { useApiResource } from '../hooks/useApiResource.js';
+import { useEffect, useState } from 'react';
+import { getJson } from '../api/client.js';
 
 type LeaderboardEntry = {
   teamName: string;
@@ -6,8 +7,35 @@ type LeaderboardEntry = {
   rank: number;
 };
 
+type LeaderboardState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'success'; data: { leaderboard: LeaderboardEntry[] } };
+
 export default function Leaderboard() {
-  const result = useApiResource<{ leaderboard: LeaderboardEntry[] }>('/api/leaderboard');
+  const [result, setResult] = useState<LeaderboardState>({ status: 'loading' });
+
+  useEffect(() => {
+    let active = true;
+    setResult({ status: 'loading' });
+    getJson<{ leaderboard: LeaderboardEntry[] }>('/api/leaderboard').then(
+      (data) => {
+        if (active) setResult({ status: 'success', data });
+      },
+      (error: unknown) => {
+        if (active) {
+          setResult({
+            status: 'error',
+            message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+          });
+        }
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section>
       <h2>Leaderboard</h2>

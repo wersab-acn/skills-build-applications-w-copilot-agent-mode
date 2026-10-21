@@ -1,4 +1,5 @@
-import { useApiResource } from '../hooks/useApiResource.js';
+import { useEffect, useState } from 'react';
+import { getJson } from '../api/client.js';
 
 type Team = {
   name: string;
@@ -6,8 +7,35 @@ type Team = {
   members: string[];
 };
 
+type TeamsState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'success'; data: { teams: Team[] } };
+
 export default function Teams() {
-  const result = useApiResource<{ teams: Team[] }>('/api/teams');
+  const [result, setResult] = useState<TeamsState>({ status: 'loading' });
+
+  useEffect(() => {
+    let active = true;
+    setResult({ status: 'loading' });
+    getJson<{ teams: Team[] }>('/api/teams').then(
+      (data) => {
+        if (active) setResult({ status: 'success', data });
+      },
+      (error: unknown) => {
+        if (active) {
+          setResult({
+            status: 'error',
+            message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+          });
+        }
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section>
       <h2>Teams</h2>

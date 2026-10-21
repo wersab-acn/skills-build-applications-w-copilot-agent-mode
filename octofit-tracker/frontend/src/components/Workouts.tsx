@@ -1,4 +1,5 @@
-import { useApiResource } from '../hooks/useApiResource.js';
+import { useEffect, useState } from 'react';
+import { getJson } from '../api/client.js';
 
 type WorkoutSuggestion = {
   title: string;
@@ -8,11 +9,38 @@ type WorkoutSuggestion = {
   reason?: string;
 };
 
+type WorkoutsState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'success'; data: { suggestions: WorkoutSuggestion[] } };
+
 export default function Workouts() {
   const userEmail = 'mona@example.com';
-  const result = useApiResource<{ suggestions: WorkoutSuggestion[] }>(
-    `/api/workouts/suggestions/${encodeURIComponent(userEmail)}`,
-  );
+  const [result, setResult] = useState<WorkoutsState>({ status: 'loading' });
+
+  useEffect(() => {
+    let active = true;
+    setResult({ status: 'loading' });
+    getJson<{ suggestions: WorkoutSuggestion[] }>(
+      `/api/workouts/suggestions/${encodeURIComponent(userEmail)}`,
+    ).then(
+      (data) => {
+        if (active) setResult({ status: 'success', data });
+      },
+      (error: unknown) => {
+        if (active) {
+          setResult({
+            status: 'error',
+            message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+          });
+        }
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [userEmail]);
+
   return (
     <section>
       <h2>Workout suggestions</h2>
